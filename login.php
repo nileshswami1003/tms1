@@ -1,9 +1,12 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
+    <title>Login</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
@@ -26,27 +29,18 @@ include 'navbar.php';
                 <form action="" method="post">
 
                     <div class="card-header bg-dark">
-                        <h2 class="text-center text-light">Register Here</h2>
+                        <h2 class="text-center text-light">Login Here</h2>
                     </div>
-                    <div class="card-body">
-
-                        <div class="form-group">
-                            <label for="">First name</label>
-                            <input type="text" name="fname" id="fname" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="">Last name</label>
-                            <input type="text" name="lname" id="lname" class="form-control">
-                        </div>
+                    <div class="card-body">                        
                         <div class="form-group">
                             <label for="">Email id</label>
                             <input type="text" name="email" id="email" class="form-control">
                         </div>
                         <div class="form-group">
-                            <label for="">Create password</label>
-                            <input type="text" name="cpass" id="cpass" class="form-control">
+                            <label for="">Password</label>
+                            <input type="text" name="pass" id="cpass" class="form-control">
                         </div>
-                        <input type="submit" value="Register" name="btnRegister" class="btn btn-dark">
+                        <input type="submit" value="Login" name="btnLogin" class="btn btn-dark">
                     </div>
 
                 </form>
@@ -70,16 +64,23 @@ include_once 'db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $fname = $_POST['fname'];
-    $lname = $_POST['lname'];
-    $email = $_POST['email'];
-    $password = $_POST['cpass'];
+    $email = $_POST["email"];
+    $password = $_POST["pass"];
 
-    $sql = "INSERT INTO users (fname,lname,email,password) VALUES ('$fname','$lname','$email','$password')";
+    $sql = "SELECT * FROM users WHERE email='$email' AND password='$password'";
 
-    if ($conn->query($sql) === TRUE) {
-        echo "<script>alert('Registration successful')</script>";
-    }
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0){
+
+        $row = $result->fetch_assoc();
+
+        $_SESSION["PLAYER_EMAIL"] = $row["email"];
+
+        echo "<script>alert('Login successful')</script>";
+        echo "<script>window.location.href='player_dashboard.php';</script>";
+        
+    } 
     else{
         echo "<script>alert('Failed, try again')</script>";
     }
